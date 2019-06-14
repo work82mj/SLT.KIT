@@ -12,6 +12,10 @@ if [ -z "$BPEDIR" ]; then
     BPEDIR=/opt/subword-nmt/
 fi
 
+if [ -z "$BPESIZE" ]; then
+    BPESIZE=40000
+fi
+
 input=$1
 name=$2
 
@@ -88,7 +92,7 @@ done
 ##BPE
 
 
-$BPEDIR/subword_nmt/learn_joint_bpe_and_vocab.py --input $BASEDIR/tmp/${name}/corpus.sc.s $BASEDIR/tmp/${name}/corpus.sc.t -s 40000 -o $BASEDIR/model/${name}/codec --write-vocabulary $BASEDIR/model/${name}/voc.s $BASEDIR/model/${name}/voc.t
+$BPEDIR/subword_nmt/learn_joint_bpe_and_vocab.py --input $BASEDIR/tmp/${name}/corpus.sc.s $BASEDIR/tmp/${name}/corpus.sc.t -s $BPESIZE -o $BASEDIR/model/${name}/codec --write-vocabulary $BASEDIR/model/${name}/voc.s $BASEDIR/model/${name}/voc.t
 
 
 for set in valid train

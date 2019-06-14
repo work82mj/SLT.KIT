@@ -7,8 +7,15 @@ size=512
 if [ $# -ne 2 ]; then
     size=$3
 fi
-layer=8
-innersize=$((layer*4))
+innersize=$((size*4))
+
+if [ -z $LAYER ]; then
+    LAYER=8
+fi
+
+if [ -z $TRANSFORMER ]; then
+    TRANSFORMER=transformer
+fi
 
 if [ -z "$BASEDIR" ]; then
     BASEDIR=/
@@ -64,13 +71,13 @@ python3 $NMTDIR/preprocess.py \
 
 python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${name}/train -data_format bin \
        -save_model $BASEDIR/model/${name}/checkpoints/model \
-       -model transformer \
+       -model $TRANSFORMER \
        -batch_size_words 3584 \
        -batch_size_update 24568 \
        -batch_size_sents 9999 \
        -batch_size_multiplier 8 \
        -checkpointing 0 \
-       -layers $layer \
+       -layers $LAYER \
        -model_size $size \
        -inner_size $innersize \
        -n_heads 8 \
