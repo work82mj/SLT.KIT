@@ -29,16 +29,18 @@ if [ -z "$CHARACTERDIR" ]; then
 fi
 
 
-source=$BASEDIR/data/orig/eval/${set}/IWSLT.${set}/IWSLT.TED.${set}.${sl}-${tl}.${sl}.xml
-reference=$BASEDIR/data/orig/eval/${set}/IWSLT.${set}/IWSLT.TED.${set}.${sl}-${tl}.${tl}.xml
-
-
-
 mkdir -p $BASEDIR/tmp/eval.manual
 mkdir -p $BASEDIR/results/$systemName/$set/
 
 
+source=$BASEDIR/data/orig/eval/${set}/IWSLT.${set}/IWSLT.TED.${set}.${sl}-${tl}.${sl}.xml
+reference=$BASEDIR/data/orig/eval/${set}/IWSLT.${set}/IWSLT.TED.${set}.${sl}-${tl}.${tl}.xml
 grep "<seg id" $reference | sed -e "s/<[^>]*>//g" > $BASEDIR/tmp/eval.manual/$set.reference
+
+
+
+
+
 
 sed -e "s/@@ //g" $BASEDIR/data/$output/eval/manualTranscript.$set.t | sed -e "s/@@$//g" | sed -e "s/&apos;/'/g" -e 's/&#124;/|/g' -e "s/&amp;/&/g" -e 's/&lt;/>/g' -e 's/&gt;/>/g' -e 's/&quot;/"/g' -e 's/&#91;/[/g' -e 's/&#93;/]/g' | perl -nle 'print ucfirst' > $BASEDIR/tmp/eval.manual/$set.hyp
 

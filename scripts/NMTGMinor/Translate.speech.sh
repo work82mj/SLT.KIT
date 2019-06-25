@@ -33,8 +33,9 @@ mkdir -p $BASEDIR/data/$name/eval/
 
 python3 -u $NMTDIR/translate.py $gpu_string \
        -model $BASEDIR/model/$name/$model \
-       -src $BASEDIR/data/$input/eval/$set.s \
+       -src $BASEDIR/data/$input/eval/$set.scp \
        -batch_size 32 -verbose\
        -beam_size 1 -alpha 1.0 \
+       -encoder_type audio -asr_format scp -concat 4 \
        -normalize \
        -output $BASEDIR/data/$name/eval/$set.t
