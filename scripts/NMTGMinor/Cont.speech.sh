@@ -1,13 +1,14 @@
 #!/bin/bash
 
-input=$1
-name=$2
+prepro=$1
+input=$2
+name=$3
 
-language=$3
+language=$4
 
 size=512
-if [ $# -ne 3 ]; then
-    size=$4
+if [ $# -ne 4 ]; then
+    size=$5
 fi
 innersize=$((size*4))
 
@@ -53,14 +54,12 @@ mkdir -p $BASEDIR/model/${name}/
 mkdir -p $BASEDIR/model/${name}/checkpoints/
 
 
-
-
-for l in scp s t
+for l in scp $language
 do
     for set in train valid
     do
        echo -n "" > $BASEDIR/tmp/${name}/$set.$l
-       for f in $BASEDIR/data/${input}/${set}/*\.${l}
+       for f in $BASEDIR/data/${prepro}/${set}/*\.${l}
        do
 	   
  	   cat $f >> $BASEDIR/tmp/${name}/$set.$l
@@ -68,38 +67,46 @@ do
     done
 done
 
- python3 $NMTDIR/preprocess.py \
-         -train_src $BASEDIR/tmp/${name}/train.s \
-         -train_tgt $BASEDIR/tmp/${name}/train.t \
-        -valid_src $BASEDIR/tmp/${name}/valid.s \
-        -valid_tgt $BASEDIR/tmp/${name}/valid.t \
-        -src_seq_length 512 \
-        -tgt_seq_length 512 \
-        -join_vocab \
-        -save_data $BASEDIR/model/${name}/train.text
+python3 $NMTDIR/preprocess.py \
+        -train_src $BASEDIR/tmp/${name}/train.scp \
+        -train_tgt $BASEDIR/tmp/${name}/train.$language \
+       -valid_src $BASEDIR/tmp/${name}/valid.scp \
+       -valid_tgt $BASEDIR/tmp/${name}/valid.$language \
+       -src_seq_length 1024 \
+       -tgt_seq_length 512 \
+       -concat 4 -asr -src_type audio\
+       -asr_format scp\
+       -tgt_vocab $BASEDIR/model/${input}/train.tgt.dict\
+       -save_data $BASEDIR/model/${name}/train
 
- python3 $NMTDIR/preprocess.py \
-         -train_src $BASEDIR/tmp/${name}/train.scp \
-         -train_tgt $BASEDIR/tmp/${name}/train.$language \
-        -valid_src $BASEDIR/tmp/${name}/valid.scp \
-        -valid_tgt $BASEDIR/tmp/${name}/valid.$language \
-        -src_seq_length 1024 \
-        -tgt_seq_length 512 \
-        -tgt_vocab $BASEDIR/model/${name}/train.text.tgt.dict\
-        -concat 4 -asr -src_type audio\
-        -asr_format scp\
-        -save_data $BASEDIR/model/${name}/train.audio
 
-python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${name}/train.audio -data_format raw \
-       -additional_data $BASEDIR/model/${name}/train.text -additional_data_format raw \
-       -data_ratio "1;1" \
+min=99999
+best=""
+for f in `ls $BASEDIR/model/${input}/checkpoints/`
+do
+    error=`echo $f | sed -e "s/model_ppl_//g" -e "s/_e.*//g"`
+
+    cmp=`echo $error $min | awk '{if($1 < $2){print "1"}else{print "0"}}'`
+    if [ $cmp == "1" ]; then
+        min=$error
+        best=$f
+    fi
+
+done
+
+echo $best
+
+
+
+python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${name}/train -data_format raw \
        -save_model $BASEDIR/model/${name}/checkpoints/model \
+       -load_from $BASEDIR/model/${input}/checkpoints/$best \
        -model $TRANSFORMER \
        -batch_size_words 2048 \
        -batch_size_update 24568 \
        -batch_size_sents 9999 \
        -batch_size_multiplier 8 \
-       -encoder_type mix \
+       -encoder_type audio \
        -checkpointing 0 \
        -input_size 172 \
        -layers $LAYER \
@@ -113,7 +120,7 @@ python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${name}/train.audio -data_form
        -word_dropout 0.1 \
        -emb_dropout 0.2 \
        -label_smoothing 0.1 \
-       -epochs 64 \
+       -epochs 128 \
        -learning_rate 2 \
        -optim 'adam' \
        -update_method 'noam' \
