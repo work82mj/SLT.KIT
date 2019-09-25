@@ -4,11 +4,10 @@ prepro=$1
 input=$2
 name=$3
 
-language=$4
 
 size=512
-if [ $# -ne 4 ]; then
-    size=$5
+if [ $# -ne 3 ]; then
+    size=$4
 fi
 innersize=$((size*4))
 
@@ -49,47 +48,10 @@ if [ ! -z "$FP16" ]; then
     gpu_string_train=$gpu_string_train" -fp16"
 fi
 
-if [ ! -z "OPTIM" ]; then
-    optim_str="-optim 'adam' -update_method 'noam'"
-elif [ OPTIM == "noam" ]; then
-    optim_str="-optim 'adam' -update_method 'noam'"
-elif [ OPTIM == "adam" ]; then
-    optim_str="-optim 'adam'"
-fi
-
-if [ -z "$LR" ]; then
-    LR=2
-fi
-
 mkdir -p $BASEDIR/tmp/${name}/
 mkdir -p $BASEDIR/model/${name}/
 mkdir -p $BASEDIR/model/${name}/checkpoints/
 
-
-# for l in scp $language
-# do
-#     for set in train valid
-#     do
-#        echo -n "" > $BASEDIR/tmp/${name}/$set.$l
-#        for f in $BASEDIR/data/${prepro}/${set}/*\.${l}
-#        do
-	   
-#  	   cat $f >> $BASEDIR/tmp/${name}/$set.$l
-#        done
-#     done
-# done
-
-# python3 $NMTDIR/preprocess.py \
-#         -train_src $BASEDIR/tmp/${name}/train.scp \
-#         -train_tgt $BASEDIR/tmp/${name}/train.$language \
-#        -valid_src $BASEDIR/tmp/${name}/valid.scp \
-#        -valid_tgt $BASEDIR/tmp/${name}/valid.$language \
-#        -src_seq_length 1024 \
-#        -tgt_seq_length 512 \
-#        -concat 4 -asr -src_type audio\
-#        -asr_format scp\
-#        -tgt_vocab $BASEDIR/model/${input}/train.tgt.dict\
-#        -save_data $BASEDIR/model/${name}/train
 
 
 min=99999
@@ -110,20 +72,17 @@ echo $best
 
 
 
-python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${input}/train -data_format raw \
+python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${input}/train -data_format bin \
        -save_model $BASEDIR/model/${name}/checkpoints/model \
        -load_from $BASEDIR/model/${input}/checkpoints/$best \
        -model $TRANSFORMER \
-       -batch_size_words 2048 \
+       -batch_size_words 3584 \
        -batch_size_update 24568 \
        -batch_size_sents 9999 \
        -batch_size_multiplier 8 \
-       -encoder_type audio \
+       -encoder_type text \
        -checkpointing 0 \
-       -input_size 172 \
        -layers $LAYER \
-       -encoder_layer $ENC_LAYER \
-       -death_rate 0.5 \
        -model_size $size \
        -inner_size $innersize \
        -n_heads 8 \
@@ -132,9 +91,10 @@ python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${input}/train -data_format ra
        -word_dropout 0.1 \
        -emb_dropout 0.2 \
        -label_smoothing 0.1 \
-       -epochs 128 \
-       -learning_rate $LR \
-       $optim_string \
+       -epochs 64 \
+       -learning_rate 2 \
+       -optim 'adam' \
+       -update_method 'noam' \
        -normalize_gradient \
        -warmup_steps 8000 \
        -max_generator_batches 8192 \

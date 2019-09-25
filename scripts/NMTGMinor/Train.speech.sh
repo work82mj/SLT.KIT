@@ -48,6 +48,19 @@ if [ ! -z "$FP16" ]; then
     gpu_string_train=$gpu_string_train" -fp16"
 fi
 
+if [ ! -z "OPTIM" ]; then
+    optim_str="-optim 'adam' -update_method 'noam'"
+elif [ OPTIM == "noam" ]; then
+    optim_str="-optim 'adam' -update_method 'noam'"
+elif [ OPTIM == "adam" ]; then
+    optim_str="-optim 'adam'"
+fi
+
+if [ -z "$LR" ]; then
+    LR=2
+fi
+
+
 mkdir -p $BASEDIR/tmp/${name}/
 mkdir -p $BASEDIR/model/${name}/
 mkdir -p $BASEDIR/model/${name}/checkpoints/
@@ -101,9 +114,8 @@ python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${name}/train -data_format raw
        -emb_dropout 0.2 \
        -label_smoothing 0.1 \
        -epochs 64 \
-       -learning_rate 2 \
-       -optim 'adam' \
-       -update_method 'noam' \
+       $optim_string \
+       -learning_rate $LR \
        -normalize_gradient \
        -warmup_steps 8000 \
        -max_generator_batches 8192 \
