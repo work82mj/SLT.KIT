@@ -13,6 +13,8 @@ export BPESIZE=10000
 
 export LAYER=12
 export TRANSFORMER=stochastic_transformer
+export OPTIM=Adam
+export LR=0.001
 
 echo $BASEDIR
 
