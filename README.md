@@ -20,7 +20,7 @@ The system uses the following software:
 * [NLTK](http://www.nltk.org/)
 * [LIUM Speaker Diarization](http://lium3.univ-lemans.fr/diarization/doku.php)
 * [CTC.ISL](https://github.com/markus-m-u-e-l-l-e-r/CTC.ISL)
-* [NMTGMinor] (https://github.com/quanpn90/NMTGMinor)
+* [NMTGMinor](https://github.com/quanpn90/NMTGMinor)
 
 
 Requirements:
