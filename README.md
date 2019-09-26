@@ -20,10 +20,15 @@ The system uses the following software:
 * [NLTK](http://www.nltk.org/)
 * [LIUM Speaker Diarization](http://lium3.univ-lemans.fr/diarization/doku.php)
 * [CTC.ISL](https://github.com/markus-m-u-e-l-l-e-r/CTC.ISL)
+* [NMTGMinor] (https://github.com/quanpn90/NMTGMinor)
 
 
 Requirements:
 * [Docker](https://www.docker.com/)
+
+## Updates ##
+
+* 2019-09 : [Recipe](systems/iwslt2019/how2/Train.sh) for How2 dataset (https://github.com/srvk/how2-dataset) using transformer architecture for ASR,MT and end-to-end SLT.
 
 ## Installation ##
 
