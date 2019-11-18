@@ -4,11 +4,10 @@ prepro=$1
 input=$2
 name=$3
 
-language=$4
 
 size=512
-if [ $# -ne 4 ]; then
-    size=$5
+if [ $# -ne 3 ]; then
+    size=$4
 fi
 innersize=$((size*4))
 
@@ -61,9 +60,11 @@ if [ -z "$LR" ]; then
     LR=2
 fi
 
+
 mkdir -p $BASEDIR/tmp/${name}/
 mkdir -p $BASEDIR/model/${name}/
 mkdir -p $BASEDIR/model/${name}/checkpoints/
+
 
 
 min=99999
@@ -84,20 +85,17 @@ echo $best
 
 
 
-python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${input}/train -data_format raw \
+python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${input}/train -data_format bin \
        -save_model $BASEDIR/model/${name}/checkpoints/model \
        -load_from $BASEDIR/model/${input}/checkpoints/$best \
        -model $TRANSFORMER \
-       -batch_size_words 2048 \
+       -batch_size_words 3584 \
        -batch_size_update 24568 \
        -batch_size_sents 9999 \
        -batch_size_multiplier 8 \
-       -encoder_type audio \
+       -encoder_type text \
        -checkpointing 0 \
-       -input_size 172 \
        -layers $LAYER \
-       -encoder_layer $ENC_LAYER \
-       -death_rate 0.5 \
        -model_size $size \
        -inner_size $innersize \
        -n_heads 8 \
@@ -106,8 +104,8 @@ python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${input}/train -data_format ra
        -word_dropout 0.1 \
        -emb_dropout 0.2 \
        -label_smoothing 0.1 \
-       -epochs 128 \
-       -learning_rate $LR \
+       -epochs 64 \
+       -learning_rate 2 \
        $optim_string \
        -normalize_gradient \
        -warmup_steps 8000 \

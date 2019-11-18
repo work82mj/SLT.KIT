@@ -55,9 +55,9 @@ mkdir -p $BASEDIR/model/${name}/checkpoints/
 
 cd $BASEDIR/model/${name}/
 ln -s $BASEDIR/model/${input}/train.audio.train.pt 
-ln -s $BASEDIR/model/${name}/train.text.src.dict 
-ln -s $BASEDIR/model/${name}/train.text.tgt.dict 
-ln -s $BASEDIR/model/${name}/train.text.train.pt
+ln -s $BASEDIR/model/${input}/train.text.src.dict 
+ln -s $BASEDIR/model/${input}/train.text.tgt.dict 
+ln -s $BASEDIR/model/${input}/train.text.train.pt
 
 
 min=99999
