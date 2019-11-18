@@ -69,6 +69,11 @@ if [ -z "$ASR_FORMAT" ]; then
     ASR_FORMAT=scp
 fi
 
+if [ -z "$ASR_FEATURE_SIZE" ]; then
+    ASR_FEATURE_SIZE=43
+fi
+
+asr_input_size=`echo $ASR_FEATURE_SIZE | awk '{print 4*$1}'`
 
 
 mkdir -p $BASEDIR/tmp/${name}/
@@ -82,12 +87,31 @@ for l in $ASR_FORMAT $language
 do
     for set in train valid
     do
-       echo -n "" > $BASEDIR/tmp/${name}/$set.$l
-       for f in $BASEDIR/data/${input}/${set}/*\.${l}
-       do
-	   
+	echo $l $set
+       if [ $l == "h5" ]; then
+	   #h5 does not support mutliple files
+	   echo START
+	   if [ -f "$BASEDIR/tmp/${name}/$set.$ASR_FORMAT" ]; then
+	       rm $BASEDIR/tmp/${name}/$set.$ASR_FORMAT
+	   fi
+	   echo DELETED
+	   echo ls $BASEDIR/data/${input}/${set}/*\.${l} -l
+	   files=`ls $BASEDIR/data/${input}/${set}/*\.${l} -l | wc -l`
+	   echo $files
+	   if [ $files -ne 1 ]; then
+	       echo "H5 only support a single training file"
+	       exit;
+	   fi
+	   ln -s $BASEDIR/data/${input}/${set}/*\.${l} $BASEDIR/tmp/${name}/$set.$l
+       else
+	   echo -n "" > $BASEDIR/tmp/${name}/$set.$l
+	   for f in $BASEDIR/data/${input}/${set}/*\.${l}
+	   do
+	       
  	   cat $f >> $BASEDIR/tmp/${name}/$set.$l
-       done
+	   done
+       fi
+
     done
 done
 
@@ -99,7 +123,7 @@ python3 $NMTDIR/preprocess.py \
        -src_seq_length 1024 \
        -tgt_seq_length 512 \
        -concat 4 -asr -src_type audio\
-       -asr_format scp\
+       -asr_format $ASR_FORMAT\
        -save_data $BASEDIR/model/${name}/train
 
 python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${name}/train -data_format raw \
@@ -111,7 +135,7 @@ python3 -u $NMTDIR/train.py  -data $BASEDIR/model/${name}/train -data_format raw
        -batch_size_multiplier 8 \
        -encoder_type audio \
        -checkpointing 0 \
-       -input_size 172 \
+       -input_size $asr_input_size \
        -layers $LAYER \
        -encoder_layer $ENC_LAYER \
        -death_rate 0.5 \
