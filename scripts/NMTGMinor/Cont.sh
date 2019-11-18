@@ -48,13 +48,17 @@ if [ ! -z "$FP16" ]; then
     gpu_string_train=$gpu_string_train" -fp16"
 fi
 
-if [ ! -z "OPTIM" ]; then
-    optim_str="-optim 'adam' -update_method 'noam'"
-elif [ OPTIM == "noam" ]; then
-    optim_str="-optim 'adam' -update_method 'noam'"
-elif [ OPTIM == "adam" ]; then
-    optim_str="-optim 'adam'"
+if [ -z $OPTIM ]; then
+    optim_str="-optim adam -update_method noam"
+elif [ $OPTIM == "noam" ]; then
+    optim_str="-optim adam -update_method noam"
+elif [ $OPTIM == "adam" ]; then
+    optim_str="-optim adam"
+else 
+    echo "Unkown optim methods "$OPTIM
+    exit;
 fi
+
 
 if [ -z "$LR" ]; then
     LR=2

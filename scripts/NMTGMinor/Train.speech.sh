@@ -48,17 +48,27 @@ if [ ! -z "$FP16" ]; then
     gpu_string_train=$gpu_string_train" -fp16"
 fi
 
-if [ ! -z "OPTIM" ]; then
-    optim_str="-optim 'adam' -update_method 'noam'"
-elif [ OPTIM == "noam" ]; then
-    optim_str="-optim 'adam' -update_method 'noam'"
-elif [ OPTIM == "adam" ]; then
-    optim_str="-optim 'adam'"
+
+if [ -z $OPTIM ]; then
+    optim_str="-optim adam -update_method noam"
+elif [ $OPTIM == "noam" ]; then
+    optim_str="-optim adam -update_method noam"
+elif [ $OPTIM == "adam" ]; then
+    optim_str="-optim adam"
+else 
+    echo "Unkown optim methods "$OPTIM
+    exit;
 fi
+
 
 if [ -z "$LR" ]; then
     LR=2
 fi
+
+if [ -z "$ASR_FORMAT" ]; then
+    ASR_FORMAT=scp
+fi
+
 
 
 mkdir -p $BASEDIR/tmp/${name}/
@@ -68,7 +78,7 @@ mkdir -p $BASEDIR/model/${name}/checkpoints/
 
 
 
-for l in scp $language
+for l in $ASR_FORMAT $language
 do
     for set in train valid
     do
@@ -82,9 +92,9 @@ do
 done
 
 python3 $NMTDIR/preprocess.py \
-        -train_src $BASEDIR/tmp/${name}/train.scp \
+        -train_src $BASEDIR/tmp/${name}/train.$ASR_FORMAT \
         -train_tgt $BASEDIR/tmp/${name}/train.$language \
-       -valid_src $BASEDIR/tmp/${name}/valid.scp \
+       -valid_src $BASEDIR/tmp/${name}/valid.$ASR_FORMAT \
        -valid_tgt $BASEDIR/tmp/${name}/valid.$language \
        -src_seq_length 1024 \
        -tgt_seq_length 512 \
