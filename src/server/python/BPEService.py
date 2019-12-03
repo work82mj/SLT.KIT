@@ -13,4 +13,5 @@ class BPEService(object):
         self.bpe = BPE(codecs.open(codes,encoding='utf-8'))
 
     def process_line(self,line):
-        return self.bpe.process_line(line.decode("UTF-8")).encode("UTF-8")
+        return self.bpe.process_line(line)
+        #return self.bpe.process_line(line.decode("UTF-8")).encode("UTF-8")
