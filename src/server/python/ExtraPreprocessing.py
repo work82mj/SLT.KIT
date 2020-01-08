@@ -1,10 +1,25 @@
 # -*- coding: utf-8 -*-
 # vim: set encoding=utf-8:
+#from past.builtins import basestring
+#from builtins import str
+#from __future__ import unicode_literals
+#from builtins import str
+from io import open
 import sys;
 import re;
 import os;
 
 # from __future__ import unicode_literals
+
+def decode_(line):
+    if hasattr(line, "decode"):
+	return line.decode("utf-8")
+    else:
+	return line
+
+def encode_(line):
+    if hasattr(line, "encode"):
+	return line.encode("utf-8")
 
 
 class ExtraPreprocessing():
@@ -12,7 +27,8 @@ class ExtraPreprocessing():
     expands common English and German contractions
     splits off apostrophes
     '''
-    umlaute = "áèìéíóúñüãõúäöüßÄÖÜéàèùâêîôûëïüÿçæœÉÀÈÙÂÊÎÔÛËÏÜŸÇÆŒó" # .decode("utf-8") #needed for proper word matching in regex
+    #umlaute = decode_("áèìéíóúñüãõúäöüßÄÖÜéàèùâêîôûëïüÿçæœÉÀÈÙÂÊÎÔÛËÏÜŸÇÆŒó") # .decode("utf-8") #needed for proper word matching in regex
+    umlaute = "áèìéíóúñüãõúäöüßÄÖÜéàèùâêîôûëïüÿçæœÉÀÈÙÂÊÎÔÛËÏÜŸÇÆŒó".decode("utf-8")
     prefixDir = os.path.dirname(os.path.abspath(__file__))
     prefixName = "nonbreaking_prefix"
 
@@ -121,7 +137,8 @@ class ExtraPreprocessing():
         else:
             raise ValueError("Could not find nonbreaking_prefix file for %r" % self.lang)
         print(prefixFile)
-        with open(prefixFile, 'r') as f:
+        #with open(prefixFile, 'r') as f:
+        with open(prefixFile, encoding='utf-8') as f:
             #print "loading nonbreaking prefixes from "+prefixFile+" for lang "+self.lang
             for line in f:
                 line = line.strip()
@@ -145,7 +162,7 @@ class ExtraPreprocessing():
         return line
 
     def process(self,line):
-        line = line#.decode("utf-8")
+        line = decode_(line)
         p = re.compile(r'@[A-Z]*\s*\{[^\}]*\}')
         start = 0
         result = ""
@@ -155,7 +172,7 @@ class ExtraPreprocessing():
             result += m.group()
             start = m.span()[1]
         result += self.processPart(line[start:])
-        return result#.encode("utf-8")
+        return encode_(result) #.encode("utf-8")
     def processPart(self,line):
         # turn ` into '
         line = re.sub(r"`", r"'", line)
