@@ -24,7 +24,7 @@ fi
 if [ ! -d /logs/ ]; then
     mkdir /logs
 fi
-sed -e "s/#PORT#/$PORT/g" -e "s/#MEDIATOR#/$MEDIATOR/g" -e "s/#NAME#/$HOSTNAME/g" -e "s/#SL#/$sl/g" -e "s/#TL#/$tl/g" /tmp/Worker.xml > /tmp/Conf.xml
+sed -e "s/#PORT#/$PORT/g" -e "s/#MEDIATOR#/$MEDIATOR/g" -e "s/#NAME#/$HOSTNAME/g" -e "s/#SL#/$sl/g" -e "s/#TL#/$tl/g" /model/Worker.xml > /tmp/Conf.xml
 sl=`grep "source" /tmp/Conf.xml | awk '{print $2}' | head -n 1`
 tl=`grep "target" /tmp/Conf.xml | awk '{print $2}' | head -n 1`
 name=$sl-$tl-$HOSTNAME
