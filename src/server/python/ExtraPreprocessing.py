@@ -30,7 +30,11 @@ class ExtraPreprocessing():
     splits off apostrophes
     '''
     umlaute = decode_("áèìéíóúñüãõúäöüßÄÖÜéàèùâêîôûëïüÿçæœÉÀÈÙÂÊÎÔÛËÏÜŸÇÆŒó") # .decode("utf-8") #needed for proper word matching in regex
-    #umlaute = "áèìéíóúñüãõúäöüßÄÖÜéàèùâêîôûëïüÿçæœÉÀÈÙÂÊÎÔÛËÏÜŸÇÆŒó".decode("utf-8")
+#    #umlaute = "áèìéíóúñüãõúäöüßÄÖÜéàèùâêîôûëïüÿçæœÉÀÈÙÂÊÎÔÛËÏÜŸÇÆŒó".decode("utf-8")
+#=======
+    #umlaute = decode_("áèìéíóúñüãõúäöüßÄÖÜéàèùâêîôûëïüÿçæœÉÀÈÙÂÊÎÔÛËÏÜŸÇÆŒó") # .decode("utf-8") #needed for proper word matching in regex
+#    umlaute = "áèìéíóúñüãõúäöüßÄÖÜéàèùâêîôûëïüÿçæœÉÀÈÙÂÊÎÔÛËÏÜŸÇÆŒó".decode("utf-8")
+#>>>>>>> 11b1419f36426210bc1f35f46605f534adc053d0
     prefixDir = os.path.dirname(os.path.abspath(__file__))
     prefixName = "nonbreaking_prefix"
 

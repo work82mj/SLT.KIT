@@ -25,4 +25,6 @@ class BPEService(object):
 
     def process_line(self,line):
         return encode_(self.bpe.process_line(decode_(line)))
+
         # return self.bpe.process_line(line.decode("UTF-8")).encode("UTF-8")
+      #return self.bpe.process_line(line.decode("UTF-8")).encode("UTF-8")
