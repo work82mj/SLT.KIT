@@ -26,7 +26,7 @@ if [ ! -d /logs/ ]; then
 fi
 cp /model/db.lmdb /tmp/db.lmdb -r 
 sed -e "s/#PORT#/$PORT/g" -e "s/#MEDIATOR#/$MEDIATOR/g" -e "s/#NAME#/$HOSTNAME/g" -e "s/#SL#/$sl/g" -e "s/#TL#/$tl/g" /model/Worker.xml > /tmp/Conf.xml
-sed -i "s/de-DE/ge-DE/g" /tmp/Conf.xml
+
 sl=`grep "source" /tmp/Conf.xml | awk '{print $2}' | head -n 1`
 tl=`grep "target" /tmp/Conf.xml | awk '{print $2}' | head -n 1`
 name=$sl-$tl-$HOSTNAME

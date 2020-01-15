@@ -2,7 +2,7 @@ From slt.kit-server
 
 #PyTorch
 RUN apt-get install python3.7 -y
-RUN apt-get install vim -y
+RUN apt-get install nano vim -y
 RUN apt-get install -y python3-pip python3.7-dev build-essential libyaml-dev
 RUN python3.7 -m pip install --upgrade pip
 RUN python3.7 --version
@@ -18,11 +18,11 @@ RUN python3.7 -m pip install torch==1.0.1 -f https://download.pytorch.org/whl/cp
 #NMTGMinor
 RUN mkdir -p /opt/lib && \
     cd /opt/lib && \
-    git clone --single-branch --branch LTTransformer https://github.com/quanpn90/NMTGMinor 
-    #git clone https://github.com/quanpn90/NMTGMinor 
+    git clone --single-branch --branch LectureTranslator.Jan.2020 https://github.com/quanpn90/NMTGMinor 
+    # git clone https://github.com/quanpn90/NMTGMinor 
 
 RUN export PYTHON_VERSION=3.7 && \
-    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/:/opt/pv-platform-sample-connector//Linux/lib64/ && \
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/:/opt/pv-platform-sample-connector//Linux/lib64/ && cd /opt/SLT.KIT/build && \
     ../src/server/configure --with-rapidxml=/opt/rapidxml --with-mongo=/usr/local/ --enable-lmdb --with-mediator=/opt/pv-platform-sample-connector/ && make && make install
 
 
