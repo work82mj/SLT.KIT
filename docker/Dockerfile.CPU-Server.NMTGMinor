@@ -22,7 +22,7 @@ RUN mkdir -p /opt/lib && \
     # git clone https://github.com/quanpn90/NMTGMinor 
 
 RUN export PYTHON_VERSION=3.7 && \
-    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/:/opt/pv-platform-sample-connector//Linux/lib64/ && cd /opt/SLT.KIT/build && \
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/:/opt/pv-platform-sample-connector//Linux/lib64/ && cd /opt/SLT.KIT/build && git pull && \
     ../src/server/configure --with-rapidxml=/opt/rapidxml --with-mongo=/usr/local/ --enable-lmdb --with-mediator=/opt/pv-platform-sample-connector/ && make && make install
 
 

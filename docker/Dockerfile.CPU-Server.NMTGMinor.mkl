@@ -1,0 +1,55 @@
+From slt.kit-server
+
+#RUN cd /opt && \
+    # git clone https://github.com/isl-mt/SLT.KIT.git && \
+    # cd SLT.KIT && cd -
+    #git checkout 2f9877cbc53730a8352bf49f1ee97e8bd8de104c && \
+    #cd -
+
+
+#Anaconda3
+#FROM continuumio/miniconda3
+#RUN conda install python=3.7
+#RUN echo "source activate env" > ~/.bashrc
+#ENV PATH /opt/conda/bin:$PATH
+
+#RUN cd /opt/SLT.KIT/build
+
+RUN wget -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+RUN bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/anaconda
+#RUN export PATH="/opt/anaconda/bin:$PATH"
+# RUN . ~/.bashrc 
+ENV PATH /opt/anaconda/bin:$PATH
+RUN conda update conda
+RUN conda install python=3.7
+
+#PyTorch
+# RUN apt-get install python3.7 -y
+RUN apt-get install nano vim -y
+# RUN apt-get install -y python3-pip python3.7-dev build-essential libyaml-dev
+# RUN python3.7 -m pip install --upgrade pip
+# RUN python3.7 --version
+# RUN pip --version
+# RUN python3.7 -c 'import struct;print(struct.calcsize("P") * 8)'
+#RUN python3.7 -m pip install https://download.pytorch.org/whl/cpu/torch-1.0.1-cp37-cp37m-win_amd64.whl && \
+# RUN python3.7 -m pip install torch==1.0.1 -f https://download.pytorch.org/whl/cpu/stable && \
+#    python3.7 -m pip install torchvision && \
+#    python3.7 -m pip install -U numpy && \
+#    python3.7 -m pip install nltk && \ 
+#    python3.7 -m pip install h5py 
+RUN conda install nltk h5py 
+RUN conda install pytorch=1.3.1 torchvision cpuonly -c pytorch
+
+
+#NMTGMinor
+RUN mkdir -p /opt/lib && \
+    cd /opt/lib && \
+    git clone --single-branch --branch LectureTranslator.Jan.2020 https://github.com/quanpn90/NMTGMinor 
+    # git clone https://github.com/quanpn90/NMTGMinor 
+
+RUN export PYTHON_VERSION=3.7 && \
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib/:/opt/pv-platform-sample-connector//Linux/lib64/ && cd /opt/SLT.KIT/build && git pull && \
+    ../src/server/configure --with-rapidxml=/opt/rapidxml --with-mongo=/usr/local/ --enable-lmdb --with-mediator=/opt/pv-platform-sample-connector/ && make && make install
+
+
+CMD /opt/SLT.KIT/src/server/RUN.sh
