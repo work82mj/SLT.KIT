@@ -1,6 +1,10 @@
 From ubuntu:18.04
 
-RUN apt-get update && apt-get install -y nano python-pip python-dev build-essential libyaml-dev git wget xml-twig-tools libsort-naturally-perl default-jre sox cmake mercurial automake libtool libboost-all-dev libpstreams-dev libpthread-stubs0-dev libxml2-dev libcurl4-openssl-dev git libssl-dev language-pack-en
+RUN apt-get update && apt-get install -y nano vim python-pip python-dev build-essential libyaml-dev git wget xml-twig-tools libsort-naturally-perl default-jre sox 
+
+RUN pip install scikit-build
+
+RUN apt-get install -y cmake mercurial automake libtool libboost-all-dev libpstreams-dev libpthread-stubs0-dev libxml2-dev libcurl4-openssl-dev git libssl-dev language-pack-en
 
 RUN cd /opt && \
     git clone https://github.com/isl-mt/SLT.KIT.git && \
