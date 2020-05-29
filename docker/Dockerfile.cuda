@@ -1,0 +1,16 @@
+FROM ubuntu:18.04
+MAINTAINER Regan <http://stackoverflow.com/questions/25185405/using-gpu-from-a-docker-container>
+
+RUN apt-get update && apt-get install -y build-essential
+RUN apt-get --purge remove -y nvidia*
+
+ADD nvidia /tmp/nvidia
+RUN chmod 711 /tmp/nvidia/NVIDIA-Linux-x86_64-440.64.00.run
+RUN /tmp/nvidia/NVIDIA-Linux-x86_64-440.64.00.run -s -N --no-kernel-module # Install the driver.
+RUN rm -rf /tmp/selfgz7   # For some reason the driver installer left temp files when used during a docker build (i don't have any explanation why) and the CUDA installer will fail if there still there so we delete them.
+
+RUN chmod 711 /tmp/nvidia/cuda_10.0.130_410.48_linux.run
+RUN /tmp/nvidia/cuda_10.0.130_410.48_linux.run --silent
+RUN export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64         # Add CUDA library into your PATH
+RUN touch /etc/ld.so.conf.d/cuda.conf                                     # Update the ld.so.conf.d directory
+RUN rm -rf /temp/*  # Delete installer files.

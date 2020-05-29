@@ -1,4 +1,4 @@
-From slt.kit-server
+From slt.kit-server.gpu
 
 #RUN cd /opt && \
     # git clone https://github.com/isl-mt/SLT.KIT.git && \
@@ -38,7 +38,8 @@ RUN apt-get install nano vim -y
 #    python3.7 -m pip install nltk && \ 
 #    python3.7 -m pip install h5py 
 RUN conda install nltk h5py 
-RUN conda install pytorch=1.3.1 torchvision cpuonly -c pytorch
+#RUN conda install pytorch=1.3.1 torchvision cpuonly -c pytorch
+RUN conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
 
 
 #NMTGMinor
