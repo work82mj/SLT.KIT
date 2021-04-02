@@ -42,6 +42,7 @@ RUN wget https://repo.continuum.io/miniconda/Miniconda3-py37_4.9.2-Linux-x86_64.
     bash Miniconda.sh -b -p /opt/miniconda3 && \
     rm Miniconda.sh
 ENV PATH /opt/miniconda3/bin:$PATH
+RUN pip install --upgrade pip
 
 # DyNet
 # RUN cd /opt && git clone https://gitlab.com/libeigen/eigen.git -r b2e267d
