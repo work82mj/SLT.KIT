@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y python-pip python-dev build-essential l
 # RUN curl https://bootstrap.pypa.io/2.7/get-pip.py -o get-pip.py && python get-pip.py
 
 RUN cd /opt && \
-    git clone https://github.com/isl-mt/SLT.KIT.git
+    git clone -b vus_eval --single-branch https://github.com/work82mj/SLT.KIT.git
 #PyTorch
 RUN pip install setuptools==44.0.0
 RUN pip install numpy==1.16.6
